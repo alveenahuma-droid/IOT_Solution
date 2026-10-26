@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeHome Basic | IoT Safety Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .logo-text p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(76, 201, 240, 0.1);
+            border-radius: 50px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4cc9f0;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sensor-value {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+
+        .sensor-label {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sensor-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .status-normal { background: rgba(76, 201, 240, 0.1); color: var(--success); }
+        .status-warning { background: rgba(247, 37, 133, 0.1); color: var(--warning); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-home-heart"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>SafeHome Basic</h1>
+                    <p>IoT Safety Monitor for Elderly Care</p>
+                </div>
+            </div>
+            <div class="user-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>System Active</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">👵 Mary Johnson</div>
+                    <div class="user-location">📍 Living Room</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sensor Dashboard -->
+        <div class="dashboard-grid">
+            <!-- Health Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-heartbeat" style="color: var(--primary);"></i>
+                        <span>Health Metrics</span>
+                    </div>
+                    <div class="card-time">Live</div>
+                </div>
+                <div class="sensor-value" id="heartRate">72</div>
+                <div class="sensor-label">Heart Rate (BPM)</div>
+                <div class="sensor-status status-normal">
+                    <i class="fas fa-check-circle"></i> Normal
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="sensor-value" id="oxygenLevel">98%</div>
+                    <div class="sensor-label">Blood Oxygen</div>
+                </div>
+            </div>
+
+            <!-- Motion & Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-walking" style="color: var(--primary);"></i>
+                        <span>Activity Monitor</span>
+                    </div>
+                    <div class="card-time">Today</div>
+                </div>
+                <div class="sensor-value" id="activityLevel">Active</div>
+                <div class="sensor-label">Current Status</div>
+                <div class="sensor-status status-normal">
+                    <i class="fas fa-check-circle"></i> Normal Activity
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="sensor-value" id="stepsCount">1,247</div>
+                    <div class="sensor-label">Steps Taken</div>
+                </div>
+            </div>
+
+            <!-- Environment Sensors -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-temperature-high" style="color: var(--primary);"></i>
+                        <span>Environment</span>
+                    </div>
+                    <div class="card-time">Living Room</div>
+                </div>
+                <div class="sensor-value" id="temperature">22°C</div>
+                <div class="sensor-label">Temperature</div>
+                <div class="sensor-status status-normal">
+                    <i class="fas fa-check-circle"></i> Comfortable
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 20px;">
+                    <div>
+                        <div class="sensor-value" style="font-size: 32px;" id="humidity">45%</div>
+                        <div class="sensor-label">Humidity</div>
+                    </div>
+                    <div>
+                        <div class="sensor-value" style="font-size: 32px;" id="airQuality">Good</div>
+                        <div class="sensor-label">Air Quality</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Status -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-microchip" style="color: var(--primary);"></i>
+                    <span>Connected Devices</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 60px; height: 60px; background: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; margin: 0 auto 15px;">
+                        <i class="fas fa-watch"></i>
+                    </div>
+                    <h4>Smart Watch</h4>
+                    <div class="sensor-status status-normal">
+                        <i class="fas fa-wifi"></i> Connected
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="width: 60px; height: 60px; background: var(--primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; margin: 0 auto 15px;">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h4>Motion Sensors</h4>
+                    <div class="sensor-status status-normal">
+                        <i class="fas fa-wifi"></i> Connected
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        
+        class SafeHomeBasic {
+            constructor() {
+                this.userData = {
+                    heartRate: 72,
+                    oxygenLevel: 98,
+                    temperature: 22,
+                    humidity: 45,
+                    steps: 1247,
+                    activityLevel: "Active"
+                };
+                
+                this.initialize();
+            }
+            
+            initialize() {
+                console.log("SafeHome Basic Monitor Initialized");
+                
+                // Simple data updates
+                setInterval(() => {
+                    this.updateHealthMetrics();
+                    this.updateEnvironmentMetrics();
+                    this.updateActivity();
+                }, 10000);
+            }
+            
+            updateHealthMetrics() {
+                // Simulate small variations
+                const hrVariation = Math.random() * 2 - 1;
+                this.userData.heartRate = Math.max(60, Math.min(90, 
+                    this.userData.heartRate + hrVariation));
+                
+                document.getElementById('heartRate').textContent = 
+                    Math.round(this.userData.heartRate);
+                document.getElementById('oxygenLevel').textContent = 
+                    Math.round(this.userData.oxygenLevel) + '%';
+            }
+            
+            updateEnvironmentMetrics() {
+                const tempVariation = Math.random() * 0.3 - 0.15;
+                this.userData.temperature = Math.max(18, Math.min(26, 
+                    this.userData.temperature + tempVariation));
+                
+                document.getElementById('temperature').textContent = 
+                    Math.round(this.userData.temperature) + '°C';
+                document.getElementById('humidity').textContent = 
+                    Math.round(this.userData.humidity) + '%';
+            }
+            
+            updateActivity() {
+                // Randomly add steps
+                if (Math.random() > 0.5) {
+                    this.userData.steps += Math.floor(Math.random() * 5);
+                    document.getElementById('stepsCount').textContent = 
+                        this.userData.steps.toLocaleString();
+                }
+                
+                // Update activity status
+                const statuses = ["Active", "Resting", "Moving"];
+                this.userData.activityLevel = statuses[Math.floor(Math.random() * statuses.length)];
+                document.getElementById('activityLevel').textContent = this.userData.activityLevel;
+            }
+        }
+        
+        // Initialize basic system
+        document.addEventListener('DOMContentLoaded', function() {
+            const safeHome = new SafeHomeBasic();
+        });
+    </script>
+</body>
+</html>
